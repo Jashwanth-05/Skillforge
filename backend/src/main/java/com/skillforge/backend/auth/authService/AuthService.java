@@ -1,5 +1,6 @@
 package com.skillforge.backend.auth.authService;
 
+import com.skillforge.backend.common.exception.EmailAlreadyExistsException;
 import com.skillforge.backend.user.dto.request.RegisterRequest;
 import com.skillforge.backend.user.dto.response.UserResponse;
 import com.skillforge.backend.user.entity.Role;
@@ -23,8 +24,8 @@ public class AuthService {
 
     public UserResponse register(RegisterRequest request){
         String email=request.email();
-        if(userRepository.existByEmail(email)){
-           throw new RuntimeException("Email already exists");
+        if(userRepository.existsByEmail(email)){
+           throw new EmailAlreadyExistsException();
         }
         User user=userMapper.toUser(request);
         user.setRole(Role.USER);
