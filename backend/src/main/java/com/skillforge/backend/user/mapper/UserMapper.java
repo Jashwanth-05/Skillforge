@@ -3,15 +3,14 @@ package com.skillforge.backend.user.mapper;
 import com.skillforge.backend.user.dto.request.RegisterRequest;
 import com.skillforge.backend.user.dto.response.UserResponse;
 import com.skillforge.backend.user.entity.User;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UserMapper {
     public User toUser(RegisterRequest registerRequest){
         User user=new User();
         user.setName(registerRequest.name());
         user.setEmail(registerRequest.email());
-        user.setPassword(registerRequest.password());
         return user;
     }
     public UserResponse toUserResponse(User user){

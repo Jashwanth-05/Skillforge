@@ -1,8 +1,10 @@
 package com.skillforge.backend.user.dto.response;
 
-public record RegisterResponse(
+import com.skillforge.backend.user.entity.Role;
+
+public record UserResponse(
         Long id,
         String name,
         String email,
-        String role) {
+        Role role) {
 }
