@@ -1,7 +1,7 @@
-spring.application.name=backend
-spring.datasource.url=jdbc:postgresql://localhost:5432/skillforge
-spring.datasource.username=postgres
-spring.datasource.password=Rasiganda@1
+spring.application.name=
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
