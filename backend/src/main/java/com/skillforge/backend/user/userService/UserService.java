@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    public UserResponse getCurrentUser(){
+
+    public User getAuthenticatedUser(){
         Authentication authentication =
                 SecurityContextHolder
                         .getContext()
@@ -19,8 +20,11 @@ public class UserService {
 
         CustomUserDetails userDetails =
                 (CustomUserDetails) authentication.getPrincipal();
+        return userDetails.getUser();
+    }
+    public UserResponse getCurrentUser(){
 
-        User user = userDetails.getUser();
+        User user = getAuthenticatedUser();
 
         return new UserResponse(
                 user.getId(),
