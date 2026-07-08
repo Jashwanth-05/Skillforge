@@ -1,6 +1,8 @@
 package com.skillforge.backend.auth.authController;
 
 import com.skillforge.backend.auth.authService.AuthService;
+import com.skillforge.backend.auth.dto.request.LoginRequest;
+import com.skillforge.backend.auth.dto.response.LoginResponse;
 import com.skillforge.backend.user.dto.request.RegisterRequest;
 import com.skillforge.backend.user.dto.response.UserResponse;
 import jakarta.validation.Valid;
@@ -24,6 +26,12 @@ public class AuthController {
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request){
         UserResponse response=authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request){
+        LoginResponse response=authService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
