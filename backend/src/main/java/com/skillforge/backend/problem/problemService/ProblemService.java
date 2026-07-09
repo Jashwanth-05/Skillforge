@@ -10,11 +10,11 @@ import com.skillforge.backend.problem.mapper.ProblemMapper;
 import com.skillforge.backend.problem.problemRepository.ProblemRepository;
 import com.skillforge.backend.user.entity.User;
 import com.skillforge.backend.user.userService.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -50,7 +50,7 @@ public class ProblemService {
     }
 
 
-    private Problem findProblemBySlug(String slug){
+    public Problem findProblemBySlug(String slug){
         return problemRepository.findBySlug(slug).orElseThrow(()->new ProblemNotFoundException(slug));
     }
 

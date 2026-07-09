@@ -39,15 +39,25 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/register","/api/v1/auth/login")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/problems/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/problems").hasRole("ADMIN")
+                .authorizeHttpRequests(auth ->auth
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+
+                        // Problem APIs
+                        .requestMatchers(HttpMethod.POST, "/api/v1/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/problems/**").hasRole("ADMIN")
-                        .anyRequest()
-                        .authenticated()
+
+                        // TestCase APIs
+                        .requestMatchers(HttpMethod.POST, "/api/v1/problems/*/testcases").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/problems/*/testcases/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/problems/*/testcases/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/problems/*/testcases").hasRole("ADMIN")
+
+                        // Public APIs
+                        .requestMatchers(HttpMethod.GET, "/api/v1/problems/*/samples").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/problems/**").permitAll()
+
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

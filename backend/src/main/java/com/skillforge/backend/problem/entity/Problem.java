@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "problem")
 @Getter
@@ -16,27 +19,40 @@ import lombok.Setter;
 public class Problem extends BaseEntity {
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    String title;
+    private String title;
 
     @Column(nullable = false,unique = true)
-    String slug;
+    private String slug;
 
     @Lob
-    String description;
+    private String description;
 
     @Enumerated(EnumType.STRING)
-    Difficulty difficulty;
+    private Difficulty difficulty;
 
     @Column(nullable = false)
-    Integer timeLimit;
+    private Integer timeLimit;
 
     @Column(nullable = false)
-    Integer memoryLimit;
+    private Integer memoryLimit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by",nullable = false)
-    User createdBy;
+    private User createdBy;
+
+    @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<TestCase> testCases = new ArrayList<>();
+
+    public void addTestCase(TestCase testCase){
+        testCases.add(testCase);
+        testCase.setProblem(this);
+    }
+
+    public void removeTestCase(TestCase testCase){
+        testCases.remove(testCase);
+        testCase.setProblem(null);
+    }
 }
