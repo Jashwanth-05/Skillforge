@@ -1,6 +1,7 @@
 package com.skillforge.backend.execution.util;
 
 import com.skillforge.backend.execution.dto.response.CompilationResult;
+import com.skillforge.backend.execution.dto.response.CompiledProgram;
 import com.skillforge.backend.execution.dto.response.ExecutionResult;
 import lombok.experimental.UtilityClass;
 
@@ -30,18 +31,18 @@ public class JavaExecutionUtil {
         Process process=processBuilder.start();
         int exitcode=process.waitFor();
         if(exitcode==0){
-            return new CompilationResult(true,"");
+            return new CompilationResult(true,"",new CompiledProgram(sourceFile.getParent(),"Main"));
         }
         String error=new String(process.getErrorStream().readAllBytes()).trim();
-        return new CompilationResult(false,error);
+        return new CompilationResult(false,error,null);
     }
 
-    public ExecutionResult run(Path sourceFile,String input) throws IOException, InterruptedException{
+    public ExecutionResult run(CompiledProgram compiledProgram,String input) throws IOException, InterruptedException{
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "java",
                 "-cp",
-                sourceFile.getParent().toString(),
-                "Main");
+                compiledProgram.workingDirectory().toString(),
+                compiledProgram.mainClass());
         Process process = processBuilder.start();
 
         if(input!=null && !input.isBlank()){

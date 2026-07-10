@@ -5,31 +5,32 @@ import com.skillforge.backend.execution.dto.response.CompilationResult;
 import com.skillforge.backend.execution.dto.response.ExecutionResponse;
 import com.skillforge.backend.execution.dto.response.ExecutionResult;
 import com.skillforge.backend.execution.enums.ExecutionStatus;
-import com.skillforge.backend.execution.util.JavaExecutionUtil;
+import com.skillforge.backend.execution.executor.CodeExecutor;
+import com.skillforge.backend.execution.executor.CodeExecutorFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LocalJavaExecutionService implements ExecutionService{
+public class LocalExecutionService implements ExecutionService{
+
+    private final CodeExecutorFactory executorFactory;
+
     @Override
     public ExecutionResponse execute(ExecutionRequest request) {
-        Path sourceFile = null;
+        CodeExecutor executor=executorFactory.getExecutor(request.language());
+        CompilationResult compilation = null;
         try{
-            sourceFile = JavaExecutionUtil.createSourceFile(request.sourceCode());
-            CompilationResult compilation=JavaExecutionUtil.compile(sourceFile);
+            compilation = executor.compile(request.sourceCode());
             if(!compilation.success()){
                 return new ExecutionResponse(
                         ExecutionStatus.COMPILATION_ERROR,
                         "",compilation.error(),
                         null);
             }
-            ExecutionResult execution = JavaExecutionUtil.run(sourceFile, request.input());
+            ExecutionResult execution = executor.run(compilation.compiledProgram(), request.input());
 
             if(execution.timedOut()){
                 return new ExecutionResponse(
@@ -54,12 +55,8 @@ public class LocalJavaExecutionService implements ExecutionService{
             log.error("Failed to execute Java program", e);
             throw new RuntimeException("Execution failed", e);
         }finally {
-            if (sourceFile != null) {
-                try {
-                    JavaExecutionUtil.deleteDirectory(sourceFile.getParent());
-                } catch (IOException e) {
-                    log.warn("Failed to delete temp directory", e);
-                }
+            if (compilation != null && compilation.compiledProgram() != null) {
+                executor.cleanup(compilation.compiledProgram());
             }
         }
     }

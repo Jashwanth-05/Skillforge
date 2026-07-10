@@ -4,7 +4,6 @@ import com.skillforge.backend.common.entity.BaseEntity;
 import com.skillforge.backend.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -44,6 +43,7 @@ public class Problem extends BaseEntity {
     private User createdBy;
 
     @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OrderBy("id ASC")
     private List<TestCase> testCases = new ArrayList<>();
 
     public void addTestCase(TestCase testCase){
